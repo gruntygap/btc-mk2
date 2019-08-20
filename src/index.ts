@@ -1,5 +1,5 @@
-const superagent = require('superagent');
-const parser = require('fast-html-parser');
+import parser from 'fast-html-parser';
+import superagent from 'superagent';
 
 const agent = superagent.agent();
 
@@ -84,8 +84,3 @@ getFormData()
         }).catch((error) => console.error(error));
     })
     .catch((err) => console.error(err));
-// yeet()
-//     .then(() => console.log('finished'))
-//     .catch(err => console.error(err));
-    //.post('https://auth-prod.bethel.edu/cas/login?service=https%3A%2F%2Fbanner.bethel.edu%2Fssomanager%2Fc%2FSSB')
-	// .send({ serviceId: 'https://banner.bethel.edu/ssomanager/c/SSB' })
