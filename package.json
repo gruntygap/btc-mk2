@@ -1,0 +1,25 @@
+{
+  "name": "typescript-testing",
+  "version": "1.0.0",
+  "description": "nothing",
+  "main": "dist/index.js",
+  "author": "grunty",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "fast-html-parser": "^1.0.1",
+    "request": "^2.88.0",
+    "superagent": "^5.1.0",
+    "zombie": "^6.1.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.0",
+    "@types/request": "^2.48.2",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
+  },
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "debug": "tsc && node --inspect-brk dist/index.js"
+  }
+}
