@@ -5,7 +5,7 @@ import path from 'path';
 import getClassData from './index';
 
 const app = express();
-const port = 3000;
+const port = 8000;
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/static', express.static(path.join(__dirname, '/../src/public')));
@@ -31,4 +31,4 @@ app.get('*', (req, res) => {
     res.status(401).send('HUH? Did you get that URL right?');
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, '0.0.0.0', () => console.log(`Example app listening on port ${port}!`));
