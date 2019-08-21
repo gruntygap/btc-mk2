@@ -1,13 +1,17 @@
 import bodyParser from 'body-parser';
 import express from 'express';
+import path from 'path';
+
 import getClassData from './index';
 
 const app = express();
 const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/static', express.static(path.join(__dirname, '/../src/public')));
+
 app.get('/', (req, res) => {
-    res.sendFile('/src/templates/index.html', { root: __dirname + '/..' });
+    res.sendFile('/src/public/html/index.html', { root: __dirname + '/..' });
 });
 
 app.post('/submit', async (req, res) => {

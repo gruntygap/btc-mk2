@@ -1,6 +1,7 @@
 import parser from 'fast-html-parser';
 import superagent from 'superagent';
 
+// Might have to place this into getClassData, not sure.
 const agent = superagent.agent();
 
 async function getLoginFormHtml() {
