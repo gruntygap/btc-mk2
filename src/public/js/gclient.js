@@ -9,10 +9,12 @@ var DISCOVERY_DOCS = [
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+var SCOPES = "https://www.googleapis.com/auth/calendar";
 
 var authorizeButton = document.getElementById("authorize_button");
 var signoutButton = document.getElementById("signout_button");
+var viewButton = document.getElementById('view_button');
+var addButton = document.getElementById('add_button');
 
 /**
     *  On load, called to load the auth2 library and API client library.
@@ -46,6 +48,8 @@ function initClient() {
                 );
                 authorizeButton.onclick = handleAuthClick;
                 signoutButton.onclick = handleSignoutClick;
+                viewButton.onclick = handleViewClick;
+                addButton.onclick = handleAddClick;
             },
             function(error) {
                 appendPre(JSON.stringify(error, null, 2));
@@ -61,10 +65,13 @@ function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
         authorizeButton.style.display = "none";
         signoutButton.style.display = "block";
-        listUpcomingEvents();
+        viewButton.style.display = 'block';
+        addButton.style.display = 'block';
     } else {
         authorizeButton.style.display = "block";
         signoutButton.style.display = "none";
+        viewButton.style.display = 'none';
+        addButton.style.display = 'none';
     }
 }
 
@@ -80,6 +87,14 @@ function handleAuthClick(event) {
     */
 function handleSignoutClick(event) {
     gapi.auth2.getAuthInstance().signOut();
+}
+
+function handleViewClick(event) {
+    listUpcomingEvents();
+}
+
+function handleAddClick(event) {
+    createFakeAppointment();
 }
 
 /**
@@ -126,4 +141,37 @@ function listUpcomingEvents() {
                 appendPre("No upcoming events found.");
             }
         });
+}
+
+function createFakeAppointment() {
+    let event = {
+        'summary': 'Google I/O 2015',
+        'location': '800 Howard St., San Francisco, CA 94103',
+        'description': 'A chance to hear more about Google\'s developer products.',
+        'start': {
+            'dateTime': '2019-09-03T09:00:00-07:00',
+            'timeZone': 'America/Los_Angeles'
+        },
+        'end': {
+            'dateTime': '2019-09-03T10:00:00-07:00',
+            'timeZone': 'America/Los_Angeles'
+        },
+        'recurrence': [
+            'RRULE:FREQ=DAILY;COUNT=2'
+        ],
+        'reminders': {
+            'useDefault': false,
+            'overrides': [
+                {'method': 'email', 'minutes': 24 * 60},
+                {'method': 'popup', 'minutes': 10}
+            ]
+        }
+    };
+    const request = gapi.client.calendar.events.insert({
+        'calendarId': 'primary',
+        'resource': event
+    });
+    request.execute((eventt) => {
+        appendPre('Event Created: ' + eventt.htmlLink);
+    });
 }
