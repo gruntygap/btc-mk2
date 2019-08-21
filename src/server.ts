@@ -16,6 +16,9 @@ app.get('/', (req, res) => {
 
 app.post('/submit', async (req, res) => {
     const { username, password } = req.body;
+    if (!username || !password) {
+        res.status(400).send({ message: 'You left a field empty.. why?' });
+    }
     try {
         const classData = await getClassData(username, password);
         res.send(classData);
