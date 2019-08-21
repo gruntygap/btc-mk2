@@ -2,9 +2,8 @@ import parser from 'fast-html-parser';
 import superagent from 'superagent';
 
 // Might have to place this into getClassData, not sure.
-const agent = superagent.agent();
 
-async function getLoginFormHtml() {
+async function getLoginFormHtml(agent: any) {
     const request = await agent
         .get('https://auth-prod.bethel.edu/cas/login?service=https%3A%2F%2Fbanner.bethel.edu%2Fssomanager%2Fc%2FSSB');
     return request;
@@ -18,7 +17,7 @@ async function getExecutionString(html: string) {
     return executionParam;
 }
 
-async function getDetailScheduleHtml(user: string, pass: string, execution: string) {
+async function getDetailScheduleHtml(user: string, pass: string, execution: string, agent: any) {
     const req1 = await agent
         .post('https://auth-prod.bethel.edu/cas/login')
         .type('form')
@@ -79,11 +78,13 @@ function parseDetailSchedule(html: string) {
     }
     return classData;
 }
+
 export default async function getClassData(username: string, password: string) {
     try {
-        const loginHtml = await getLoginFormHtml();
+        const agent = superagent.agent();
+        const loginHtml = await getLoginFormHtml(agent);
         const executionString = await getExecutionString(loginHtml.text);
-        const detailScheduleHtml = await getDetailScheduleHtml(username, password, executionString);
+        const detailScheduleHtml = await getDetailScheduleHtml(username, password, executionString, agent);
         const classes = parseDetailSchedule(detailScheduleHtml.text);
         return classes;
     } catch (error) {
