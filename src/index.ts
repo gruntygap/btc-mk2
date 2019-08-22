@@ -65,7 +65,7 @@ function parseDetailSchedule(html: string) {
             classroom,
             credits,
             crn,
-            dow,
+            dow: convertWeekdays(dow),
             instructor,
             level,
             name: names[i],
@@ -77,6 +77,40 @@ function parseDetailSchedule(html: string) {
         classData.push(emptyStructure);
     }
     return classData;
+}
+
+function splitDate(constraints: string) {
+    const arr = constraints.split(' - ');
+    const basicObj = {
+    	start: arr[0],
+        end: arr[1]
+    };
+    return basicObj;
+}
+
+function convertWeekdays(dowMini: string) {
+    // convert MWF or TR or whatever to an array of google accepted vals
+    const days: string[] = [];
+    const googleDays: any = {
+        F: 'FR',
+        M: 'MO',
+        R: 'TH',
+        T: 'TU',
+        W: 'WE',
+    };
+    for (let i = 0; i < dowMini.length; i++) {
+        days.push(googleDays[dowMini.charAt(i)]);
+    }
+    // convert array to comma separated string
+    let newDow = '';
+    for (let i = 0; i < days.length; i++) {
+        if (i === days.length - 1) {
+            newDow = newDow + days[i];
+        } else {
+            newDow = newDow + days[i] + ',';
+        }
+    }
+    return newDow;
 }
 
 export default async function getClassData(username: string, password: string) {

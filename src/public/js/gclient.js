@@ -175,3 +175,27 @@ function createFakeAppointment() {
         appendPre('Event Created: ' + eventt.htmlLink);
     });
 }
+
+function createEvents() {
+    const classEvents = window.classes;
+    const events = [];
+    for (let i = 0; i < classEvents.length; i++) {
+        let event = {
+            "summary": class_.class_name,
+            "location": class_.class_location,
+            "description": "",
+            "start": {
+                "dateTime": start.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
+                "timeZone": "America/Chicago",
+            },
+            "end": {
+                "dateTime": end.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
+                "timeZone": "America/Chicago",
+            },
+            "recurrence": [
+                "RRULE:FREQ=WEEKLY;BYDAY="+days+";UNTIL="+until+";"
+            ],
+        };
+    }
+}
+
