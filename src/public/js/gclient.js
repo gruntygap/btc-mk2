@@ -144,58 +144,39 @@ function listUpcomingEvents() {
 }
 
 function createFakeAppointment() {
-    let event = {
-        'summary': 'Google I/O 2015',
-        'location': '800 Howard St., San Francisco, CA 94103',
-        'description': 'A chance to hear more about Google\'s developer products.',
-        'start': {
-            'dateTime': '2019-09-03T09:00:00-07:00',
-            'timeZone': 'America/Los_Angeles'
-        },
-        'end': {
-            'dateTime': '2019-09-03T10:00:00-07:00',
-            'timeZone': 'America/Los_Angeles'
-        },
-        'recurrence': [
-            'RRULE:FREQ=DAILY;COUNT=2'
-        ],
-        'reminders': {
-            'useDefault': false,
-            'overrides': [
-                {'method': 'email', 'minutes': 24 * 60},
-                {'method': 'popup', 'minutes': 10}
-            ]
-        }
-    };
-    const request = gapi.client.calendar.events.insert({
-        'calendarId': 'primary',
-        'resource': event
-    });
-    request.execute((eventt) => {
-        appendPre('Event Created: ' + eventt.htmlLink);
-    });
+    const events = createEvents();
+    for (let i = 0; i < events.length; i++) {
+        const request = gapi.client.calendar.events.insert({
+            'calendarId': 'primary',
+            'resource': events[i]
+        });
+        request.execute((eventt) => {
+            appendPre('Event Created: ' + eventt.htmlLink);
+        });
+    }
 }
 
 function createEvents() {
     const classEvents = window.classes;
     const events = [];
     for (let i = 0; i < classEvents.length; i++) {
-        let event = {
-            "summary": class_.class_name,
-            "location": class_.class_location,
-            "description": "",
+        events.push({
+            "summary": classEvents[i].name,
+            "location": classEvents[i].classroom,
+            "description": classEvents[i].instructor,
             "start": {
-                "dateTime": start.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
+                "dateTime": classEvents[i].startDatetime,
                 "timeZone": "America/Chicago",
             },
             "end": {
-                "dateTime": end.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
+                "dateTime": classEvents[i].endDatetime,
                 "timeZone": "America/Chicago",
             },
             "recurrence": [
-                "RRULE:FREQ=WEEKLY;BYDAY="+days+";UNTIL="+until+";"
+                "RRULE:FREQ=WEEKLY;BYDAY="+classEvents[i].dow+";UNTIL="+classEvents[i].until+";"
             ],
-        };
+        });
     }
+    return events;
 }
 

@@ -1,3 +1,4 @@
+import { endOfDay, format, getDay, parse, setDay } from 'date-fns';
 import parser from 'fast-html-parser';
 import superagent from 'superagent';
 
@@ -56,36 +57,72 @@ function parseDetailSchedule(html: string) {
         const campus = trs[7].querySelector('td').text;
 
         const time = event[1].text;
-        const dow = event[2].text;
+        let dow = event[2].text;
         const classroom = event[3].text;
         const yearConstraints = event[4].text;
+
+        // recreate/create some resources
+        dow = convertWeekdays(dow);
+        const { endDatetime, startDatetime, until } = splitDate(yearConstraints, time, dow);
 
         const emptyStructure = {
             campus,
             classroom,
             credits,
             crn,
-            dow: convertWeekdays(dow),
+            dow,
+            endDatetime,
             instructor,
             level,
             name: names[i],
+            startDatetime,
             status,
             term,
             time,
-            yearConstraints,
+            until,
         };
         classData.push(emptyStructure);
     }
     return classData;
 }
 
-function splitDate(constraints: string) {
-    const arr = constraints.split(' - ');
-    const basicObj = {
-    	start: arr[0],
-        end: arr[1]
+function splitDate(constraints: string, times: string, dow: string) {
+    const dateArray = constraints.split(' - ');
+    const timeArray = times.split(' - ');
+    const dowArray = dow.split(',');
+    const dowNumArray: number[] = [];
+    const dowConfirm: any = {
+        FR: 5,
+        MO: 1,
+        TH: 4,
+        TU: 2,
+        WE: 3,
     };
-    return basicObj;
+    let startDatetime = parse(`${dateArray[0]}|${timeArray[0]}`, 'MMM dd, yyyy|h:mm aaaa', new Date());
+    let endDatetime = parse(`${dateArray[0]}|${timeArray[1]}`, 'MMM dd, yyyy|h:mm aaaa', new Date());
+    const until = format(endOfDay(parse(`${dateArray[1]}`, 'MMM dd, yyyy', new Date())), "yyyyMMdd'T'kkmmss'Z'");
+    for (let i = 0; i < dowArray.length; i++) {
+        dowNumArray.push(dowConfirm[dowArray[i]]);
+    }
+    // ensure that the start of the event is on a day of class
+    type lol = 0 | 1 | 2 | 3 | 5 | 6 | 4 | undefined;
+    const firstDayInt: lol = getDay(startDatetime) as lol;
+    let attempt = 1;
+    // Enter condition
+    while (!dowNumArray.includes(firstDayInt as number)) {
+        const numToTest = (firstDayInt as number + attempt) % 7;
+        if (dowNumArray.includes(numToTest)) {
+            startDatetime = setDay(startDatetime, numToTest, { weekStartsOn: firstDayInt });
+            endDatetime = setDay(endDatetime, numToTest, { weekStartsOn: firstDayInt });
+            break;
+        }
+        if (attempt > 7) {
+            throw new Error('Couldn\'t create a nice date for google');
+            break;
+        }
+        attempt++;
+    }
+    return { endDatetime, startDatetime, until };
 }
 
 function convertWeekdays(dowMini: string) {
