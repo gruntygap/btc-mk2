@@ -163,7 +163,7 @@ function createEvents() {
         events.push({
             "summary": classEvents[i].name,
             "location": classEvents[i].classroom,
-            "description": classEvents[i].instructor,
+            "description": `Instructor: ${classEvents[i].instructor}\nCredits: ${classEvents[i].credits}\nTerm: ${classEvents[i].term}\nLevel: ${classEvents[i].level}\n`,
             "start": {
                 "dateTime": classEvents[i].startDatetime,
                 "timeZone": "America/Chicago",

@@ -28,6 +28,7 @@ async function getDetailScheduleHtml(user: string, pass: string, execution: stri
         .send({ password: pass })
         .send({ execution })
         .send({ _eventId: 'submit' });
+    // CHANGE TERM HERE!!!
     const req2 = await agent
         .get('https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl?term_in=202011')
         .set('user-agent', 'YEETMAN');
@@ -45,43 +46,47 @@ function parseDetailSchedule(html: string) {
         .filter((something: any) => something.attributes.SUMMARY === 'This table lists the scheduled meeting times and assigned instructors for this class..');
     const classData = [];
     for (let i = 0; i < metaData.length; i++) {
-        const trs = metaData[i].removeWhitespace().querySelectorAll('tr');
-        const event = meetingData[i].removeWhitespace().querySelectorAll('td');
+        try {
+            const trs = metaData[i].removeWhitespace().querySelectorAll('tr');
+            const event = meetingData[i].removeWhitespace().querySelectorAll('td');
+            const term = trs[0].querySelector('td').text;
+            const crn = trs[1].querySelector('td').text;
+            const status = trs[2].querySelector('td').text;
+            const instructor = trs[3].querySelector('TD').text;
+            const credits = trs[5].querySelector('td').text;
+            const level = trs[6].querySelector('td').text;
+            const campus = trs[7].querySelector('td').text;
 
-        const term = trs[0].querySelector('td').text;
-        const crn = trs[1].querySelector('td').text;
-        const status = trs[2].querySelector('td').text;
-        const instructor = trs[3].querySelector('TD').text;
-        const credits = trs[5].querySelector('td').text;
-        const level = trs[6].querySelector('td').text;
-        const campus = trs[7].querySelector('td').text;
+            const time = event[1].text;
+            let dow = event[2].text;
+            const classroom = event[3].text;
+            const yearConstraints = event[4].text;
 
-        const time = event[1].text;
-        let dow = event[2].text;
-        const classroom = event[3].text;
-        const yearConstraints = event[4].text;
+            // recreate/create some resources
+            dow = convertWeekdays(dow);
+            const { endDatetime, startDatetime, until } = splitDate(yearConstraints, time, dow);
 
-        // recreate/create some resources
-        dow = convertWeekdays(dow);
-        const { endDatetime, startDatetime, until } = splitDate(yearConstraints, time, dow);
-
-        const emptyStructure = {
-            campus,
-            classroom,
-            credits,
-            crn,
-            dow,
-            endDatetime,
-            instructor,
-            level,
-            name: names[i],
-            startDatetime,
-            status,
-            term,
-            time,
-            until,
-        };
-        classData.push(emptyStructure);
+            const emptyStructure = {
+                campus,
+                classroom,
+                credits,
+                crn,
+                dow,
+                endDatetime,
+                instructor,
+                level,
+                name: names[i],
+                startDatetime,
+                status,
+                term,
+                time,
+                until,
+            };
+            classData.push(emptyStructure);
+        } catch (err) {
+            console.log('Online class detected? (maybe)');
+            continue;
+        }
     }
     return classData;
 }
