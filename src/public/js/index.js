@@ -8,7 +8,7 @@ function submitBannerCredentials() {
         data: data,
         success: function(result) {
             window.classes = result;
-            $('.results').html(`<p>${JSON.stringify(result)}</p>`);
+            $('.results').html(`${JSON.stringify(result, undefined, 2)}`);
             $('.loader').css('display', 'none');
             $('.disclaimer').css('display', 'none');
         },
