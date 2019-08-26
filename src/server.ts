@@ -22,6 +22,17 @@ const awaitHandler = (middleware: any) => {
 const app = express();
 let port = 8000;
 
+// http -> https middleware
+// TODO: look into helmet
+if (process.env.NODE_ENV === 'production') {
+    app.use((req, res, next) => {
+        if (req.secure) {
+            next();
+        } else {
+            res.redirect(`https://${req.headers.host}${req.url}`);
+        }
+    });
+}
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, '/../src/public')));
 
@@ -64,13 +75,6 @@ if (process.env.NODE_ENV === 'production') {
     };
     // http -> https middleware
     // TODO: look into helmet
-    app.use((req, res, next) => {
-        if (req.secure) {
-            next();
-        } else {
-            res.redirect(`https://${req.headers.host}${req.url}`);
-        }
-    });
     const httpsServer = https.createServer(credentials, app);
     httpsServer.listen(443, () => {
         console.log('HTTPS Server running on port 443');
