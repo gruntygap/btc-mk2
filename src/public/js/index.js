@@ -1,5 +1,5 @@
 function submitBannerCredentials() {
-    var data = $('#login').serializeArray();
+    var data = $('#loginForm').serializeArray();
     $('.loader').css('display', 'block');
     $('.disclaimer').css('display', 'block');
     $.ajax({
@@ -14,7 +14,8 @@ function submitBannerCredentials() {
                 $('.resultMeta').html(`${result.length} classes were found for ${document.getElementById("username").value}`);
             }
             $('.results').html(`${JSON.stringify(result, undefined, 2)}`);
-            $('#login')[0].reset();
+            $('#loginForm')[0].reset();
+            $('.readout').css('display', 'initial');
             $('.google').css('display', 'block');
             $('.loader').css('display', 'none');
             $('.disclaimer').css('display', 'none');

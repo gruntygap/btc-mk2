@@ -22,9 +22,9 @@
 		<div class="container">
 			<h1>Bethel Banner to Google Calendar</h1>
 			<hr />
-			<div class="row">
-			<div id="loginForm">
-				<form id="login" enctype="multipart/form-data">
+			<div class="row justify-content-center justify-content-md-left">
+                <div class="col-11 col-md-6">
+				<form id="loginForm" enctype="multipart/form-data">
 					<label for="username">Banner Username:</label>
 					<div class="input-group mb-3">
 						<input class="form-control" id="username" name="username" type="text" />
@@ -35,13 +35,13 @@
 					</div>
 					<button class=" btn btn-primary" type="submit">Submit</button>
 				</form>
-			</div>
-        	<div class="loader" style="display: none"></div>
-			<div class="disclaimer" style="display: none">Please be patient, this can take up to 20 seconds!<br>Personally, I would blame Bethel and their silly new login page.</div>
-				<div class="readout">
-					<p class="resultMeta"></p>
-					<pre class="jsonData"><code class="results"></code></pre>
-				</div>
+			    </div>
+                <div class="loader" style="display: none"></div>
+                <div class="disclaimer" style="display: none">Please be patient, this can take up to 20 seconds!<br>Personally, I would blame Bethel and their silly new login page.</div>
+                <div class="readout col-11 col-md-6" style="display:none">
+                    <p class="resultMeta"></p>
+                    <pre class="jsonData"><code class="results"></code></pre>
+                </div>
 			</div>
 			<div class="google" style="display: none">
 				<button class="btn btn-primary" id="authorize_button" style="display: none;">Authorize</button>
@@ -54,7 +54,7 @@
 			<div class="footer">Created By Grant Gapinski</div>
 		</div>
 		<script>
-			$("#login").on("submit", function() {
+			$("#loginForm").on("submit", function() {
 				return submitBannerCredentials();
 			});
 		</script>
