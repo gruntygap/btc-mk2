@@ -14,7 +14,8 @@ const awaitHandler = (middleware: any) => {
     };
 };
 const app = express();
-const port = 8000;
+const port = 80;
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/static', express.static(path.join(__dirname, '/../src/public')));
