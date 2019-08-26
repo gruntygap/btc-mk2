@@ -1,0 +1,27 @@
+[Unit]
+Description=Banner to calendar express app
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/node /home/pi/btc-mk2/dist/server.js
+WorkingDirectory=/home/pi/btc-mk2
+
+User=root
+Group=nogroup
+
+# Environment variables:
+Environment=NODE_ENV=production
+
+# Allow many incoming connections
+LimitNOFILE=infinity
+
+# Allow core dumps for debugging
+LimitCORE=infinity
+
+StandardInput=null
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
