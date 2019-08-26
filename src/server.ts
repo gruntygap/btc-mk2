@@ -9,6 +9,7 @@ import getClassData from './index';
 
 // Middleware
 import bodyParser from 'body-parser';
+import { Response } from 'express-serve-static-core';
 const awaitHandler = (middleware: any) => {
     return async (req: any, res: any, next: any) => {
         try {
@@ -32,8 +33,11 @@ const credentials = {
 };
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use('/static', express.static(path.join(__dirname, '/../src/public')));
+
+app.get('/btc', (req, res) => {
+    res.sendFile('/src/public/html/index.html', { root: __dirname + '/..' });
+});
 
 app.get('/', (req, res) => {
     res.sendFile('/src/public/html/index.html', { root: __dirname + '/..' });
