@@ -9,7 +9,6 @@ import getClassData from './index';
 
 // Middleware
 import bodyParser from 'body-parser';
-import { Response } from 'express-serve-static-core';
 const awaitHandler = (middleware: any) => {
     return async (req: any, res: any, next: any) => {
         try {
@@ -21,16 +20,7 @@ const awaitHandler = (middleware: any) => {
 };
 
 const app = express();
-
-// Certificate
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/grantgap.me/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/grantgap.me/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/grantgap.me/chain.pem', 'utf8');
-const credentials = {
-    ca,
-    cert: certificate,
-    key: privateKey,
-};
+let port = 8000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, '/../src/public')));
@@ -60,14 +50,34 @@ app.get('*', (req, res) => {
     res.status(401).send('<h1>404: not found boss<h1>');
 });
 
-// Starting both http & https servers
+// Starting http & https servers according to Env.
+if (process.env.NODE_ENV === 'production') {
+    port = 80;
+    // Create Certificate
+    const privateKey = fs.readFileSync('/etc/letsencrypt/live/grantgap.me/privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('/etc/letsencrypt/live/grantgap.me/cert.pem', 'utf8');
+    const ca = fs.readFileSync('/etc/letsencrypt/live/grantgap.me/chain.pem', 'utf8');
+    const credentials = {
+        ca,
+        cert: certificate,
+        key: privateKey,
+    };
+    // http -> https middleware
+    // TODO: look into helmet
+    app.use((req, res, next) => {
+        if (req.secure) {
+            next();
+        } else {
+            res.redirect(`https://${req.headers.host}${req.url}`);
+        }
+    });
+    const httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(443, () => {
+        console.log('HTTPS Server running on port 443');
+    });
+}
+
 const httpServer = http.createServer(app);
-const httpsServer = https.createServer(credentials, app);
-
-httpServer.listen(80, () => {
-    console.log('HTTP Server running on port 80');
-});
-
-httpsServer.listen(443, () => {
-    console.log('HTTPS Server running on port 443');
+httpServer.listen(port, () => {
+    console.log(`HTTP Server running on port ${port}`);
 });
