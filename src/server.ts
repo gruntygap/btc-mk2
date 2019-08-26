@@ -35,11 +35,11 @@ const credentials = {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, '/../src/public')));
 
-app.get('/btc', (req, res) => {
-    res.sendFile('/src/public/html/index.html', { root: __dirname + '/..' });
+app.get('/', (req, res) => {
+    res.redirect(307, '/banner-to-calendar');
 });
 
-app.get('/', (req, res) => {
+app.get('/banner-to-calendar', (req, res) => {
     res.sendFile('/src/public/html/index.html', { root: __dirname + '/..' });
 });
 
