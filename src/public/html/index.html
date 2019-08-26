@@ -15,26 +15,43 @@
 		<!-- Google client -->
 		<script async defer src="/static/js/gclient.js"></script>
 		<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()" onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>
+		<!-- Mobile Needed -->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head>
 	<body>
-		<h1>Bethel Banner to Google Calendar</h1>
-		<form id="login" enctype="multipart/form-data">
-			<p>Username:</p>
-			<input id="username" name="username" type="text" />
-			<p>Password:</p>
-			<input id="password" name="password" type="password" />
-			<br />
-			<input type="submit" />
-        </form>
-        <div class="loader" style="display: none"></div>
-        <div class="disclaimer" style="display: none">Please be patient, this can take up to 20 seconds!<br>Personally, I would blame Bethel and their silly new login page.</div>
-		<div>The Data Received:<div><pre><code class="results"></code></pre></div></div>
-		<div class="google">
-			<button id="authorize_button" style="display: none;">Authorize</button>
-			<button id="signout_button" style="display: none;">Sign Out</button>
-			<button id="view_button" style="display: none;">View Events</button>
-			<button id="add_button" style="display: none;">Add Event(s)</button>
-			<pre id="content" style="white-space: pre-wrap;"></pre>
+		<div class="container">
+			<h1>Bethel Banner to Google Calendar</h1>
+			<hr />
+			<div class="row">
+			<div id="loginForm">
+				<form id="login" enctype="multipart/form-data">
+					<label for="username">Banner Username:</label>
+					<div class="input-group mb-3">
+						<input class="form-control" id="username" name="username" type="text" />
+					</div>
+					<label for="password">Banner Password:</label>
+					<div class="input-group mb-3">
+						<input class="form-control" id="password" name="password" type="password" />
+					</div>
+					<button class=" btn btn-primary" type="submit">Submit</button>
+				</form>
+			</div>
+        	<div class="loader" style="display: none"></div>
+			<div class="disclaimer" style="display: none">Please be patient, this can take up to 20 seconds!<br>Personally, I would blame Bethel and their silly new login page.</div>
+				<div class="readout">
+					<p class="resultMeta"></p>
+					<pre class="jsonData"><code class="results"></code></pre>
+				</div>
+			</div>
+			<div class="google" style="display: none">
+				<button class="btn btn-primary" id="authorize_button" style="display: none;">Authorize</button>
+				<button class="btn btn-primary" id="signout_button" style="display: none;">Sign Out</button>
+				<button class="btn btn-primary" id="view_button" style="display: none;">View Future Events</button>
+				<button class="btn btn-primary" id="add_button" style="display: none;">Add Found Class(es)</button>
+				<pre id="content" style="white-space: pre-wrap;"></pre>
+			</div>
+			<div class="plug"><p>Did I save you any time? I hope so!</p><p>Websites like this take time to build.. Donate, so I can justify my time spent making this application</p><p>Venmo: <a href="https://venmo.com/GrantGap">@GrantGap</a></p></div>
+			<div class="footer">Created By Grant Gapinski</div>
 		</div>
 		<script>
 			$("#login").on("submit", function() {

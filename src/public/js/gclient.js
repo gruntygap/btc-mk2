@@ -64,9 +64,9 @@ function initClient() {
 function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
         authorizeButton.style.display = "none";
-        signoutButton.style.display = "block";
-        viewButton.style.display = 'block';
-        addButton.style.display = 'block';
+        signoutButton.style.display = "inline";
+        viewButton.style.display = 'inline';
+        addButton.style.display = 'inline';
     } else {
         authorizeButton.style.display = "block";
         signoutButton.style.display = "none";

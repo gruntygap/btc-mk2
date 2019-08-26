@@ -5,9 +5,13 @@ import superagent from 'superagent';
 // Might have to place this into getClassData, not sure.
 
 async function getLoginFormHtml(agent: any) {
-    const request = await agent
-        .get('https://auth-prod.bethel.edu/cas/login?service=https%3A%2F%2Fbanner.bethel.edu%2Fssomanager%2Fc%2FSSB');
-    return request;
+    try {
+        const request = await agent
+            .get('https://auth-prod.bethel.edu/cas/login?service=https%3A%2F%2Fbanner.bethel.edu%2Fssomanager%2Fc%2FSSB');
+        return request;
+    } catch (err) {
+        throw new Error(err);
+    }
 }
 
 async function getExecutionString(html: string) {
@@ -19,20 +23,23 @@ async function getExecutionString(html: string) {
 }
 
 async function getDetailScheduleHtml(user: string, pass: string, execution: string, agent: any) {
-    const req1 = await agent
-        .post('https://auth-prod.bethel.edu/cas/login')
-        .type('form')
-        .set('user-agent', 'YEETMAN')
-        .send({ separator: ':' })
-        .send({ username: user })
-        .send({ password: pass })
-        .send({ execution })
-        .send({ _eventId: 'submit' });
-    // CHANGE TERM HERE!!!
-    const req2 = await agent
-        .get('https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl?term_in=202011')
-        .set('user-agent', 'YEETMAN');
-    return req2;
+    try {
+        const req1 = await agent
+            .post('https://auth-prod.bethel.edu/cas/login')
+            .type('form')
+            .set('user-agent', 'YEETMAN')
+            .send({ separator: ':' })
+            .send({ username: user })
+            .send({ password: pass })
+            .send({ execution })
+            .send({ _eventId: 'submit' });
+        // CHANGE TERM HERE!!!
+        const req2 = await agent
+            .get('https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl?term_in=202011');
+        return req2;
+    } catch (err) {
+        throw new Error(err);
+    }
 }
 
 function parseDetailSchedule(html: string) {
@@ -123,7 +130,6 @@ function splitDate(constraints: string, times: string, dow: string) {
         }
         if (attempt > 7) {
             throw new Error('Couldn\'t create a nice date for google');
-            break;
         }
         attempt++;
     }
@@ -162,6 +168,8 @@ export default async function getClassData(username: string, password: string) {
         const executionString = await getExecutionString(loginHtml.text);
         const detailScheduleHtml = await getDetailScheduleHtml(username, password, executionString, agent);
         const classes = parseDetailSchedule(detailScheduleHtml.text);
+        // Logging message to detect usage.. hopefully people use it...
+        console.log(`${username} successfully fetched their classes`);
         return classes;
     } catch (error) {
         throw new Error(error.message);
