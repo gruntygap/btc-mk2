@@ -22,39 +22,78 @@
 		<div class="container">
 			<h1>Bethel Banner to Google Calendar</h1>
 			<hr />
-			<div class="row justify-content-center justify-content-md-left">
+			<div class="row justify-content-center">
                 <div class="col-11 col-md-6">
-				<form id="loginForm" enctype="multipart/form-data">
-					<label for="username">Banner Username:</label>
-					<div class="input-group mb-3">
-						<input class="form-control" id="username" name="username" type="text" />
+					<form id="loginForm" enctype="multipart/form-data">
+						<label for="username">Banner Username:</label>
+						<div class="input-group mb-3">
+							<input class="form-control" id="username" name="username" type="text" />
+						</div>
+						<label for="password">Banner Password:</label>
+						<div class="input-group mb-3">
+							<input class="form-control" id="password" name="password" type="password" />
+						</div>
+						<button class="submit-btn btn btn-primary" type="submit">Submit</button>
+					</form>
+					<div class="alert alert-secondary">
+						Currently fetching classes for Fall 2019 (CAS)
 					</div>
-					<label for="password">Banner Password:</label>
-					<div class="input-group mb-3">
-						<input class="form-control" id="password" name="password" type="password" />
-					</div>
-					<button class=" btn btn-primary" type="submit">Submit</button>
-				</form>
 			    </div>
-                <div class="loader" style="display: none"></div>
-                <div class="disclaimer" style="display: none">Please be patient, this can take up to 20 seconds!<br>Personally, I would blame Bethel and their silly new login page.</div>
                 <div class="readout col-11 col-md-6" style="display:none">
-                    <p class="resultMeta"></p>
+                    <p class="resultMeta" style="display: none;"></p>
                     <pre class="jsonData"><code class="results"></code></pre>
                 </div>
 			</div>
+			<br />
+			<div class="loading alert alert-primary" role="alert" style="display: none">
+				<div class="row justify-content-center">
+					<div class="loader"></div>
+					<div class="disclaimer">Please be patient, this can take up to 20 seconds!<br>Personally, I would blame Bethel's silly new login page.</div>
+				</div>
+			</div>
 			<div class="google" style="display: none">
-				<button class="btn btn-primary" id="authorize_button" style="display: none;">Authorize</button>
-				<button class="btn btn-primary" id="signout_button" style="display: none;">Sign Out</button>
-				<button class="btn btn-primary" id="view_button" style="display: none;">View Future Events</button>
-				<button class="btn btn-primary" id="add_button" style="display: none;">Add Found Class(es)</button>
+				<div class="row justify-content-center justify-content-md-start">
+					<button class="btn btn-primary col-11 col-md-5" id="authorize_button" style="display: none;">Authorize</button>
+					<button class="btn btn-primary col-11 col-md-5" id="signout_button" style="margin: 5px;display: inline;">Sign Out</button>
+					<button class="btn btn-primary col-5 col-md-3" id="view_button" style="margin: 5px;display: inline;">View Future Events</button>
+					<button class="btn btn-primary col-5 col-md-3" id="add_button" style="margin: 5px;display: inline;">Add Found Class(es)</button>
+				</div>
 				<pre id="content" style="white-space: pre-wrap;"></pre>
 			</div>
-			<div class="plug"><p>Did I save you any time? I hope so!</p><p>Websites like this take time to build.. Donate, so I can justify my time spent making this application</p><p>Venmo: <a href="https://venmo.com/GrantGap">@GrantGap</a></p></div>
-			<div class="footer">Created By Grant Gapinski</div>
+			<div class="explaination card">
+				<h5 class="card-header">What does this even do?</h5>
+				<div class="card-body">
+					<p>This application was designed to <b>quickly fetch your class data (from banner)</b> and import it to your <b>Google Calendar</b></p>
+					<p>This is accomplished in a series of steps:</p>
+					<ol>
+						<li>Fetch the auth-prod.bethel.edu page gathering required information for a successful login</li>
+						<li>Use a banner username / password to login to banner and fetch a <a href='https://banner.bethel.edu/prod8/twbkwbis.P_GenMenu?name=bmenu.P_RegMnu'>Student Detail Schedule</a></li>
+						<li>Find the class data and give it back to the person logging-in</li>
+						<li>Prepare that data to create repeating gcal events (which start and end based upon the semester)</li>
+						<li>The user will then click the "Authorize" button and login with the google account which they want events added</li>
+						<li>By clicking "Add Found Class(es)" the found classes will be added to one's calendar!</li>
+					</ol>
+					<p class="text-danger">No userdata is saved within this process</p>
+					<p>Please note: This may not work for all classes (such as classes without a start and end time).<br/><span class="text-info">you have any questions about privacy of data or the process, please email me.</span></p>
+					<p class="text-success">If you want to look into code which makes this possible, take a look at my <a href="https://github.com/gruntygap/btc-mk2">GitHub</a></p>
+				</div>
+			</div>
+			<br />
+			<div class="plug card">
+				<h5 class="card-header">Shameless plug 😳</h5>
+				<div class="card-body">
+					<p>Did I save you any time ⏰?  I hope so!</p>
+					<p>Websites like this take time (100 x ⏰) to build..<br/>If you venmo me I can justify the time spent making this application</p>
+					<p>Venmo: <a href="https://venmo.com/GrantGap">@GrantGap</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="footer">
+			Created By Grant Gapinski | <a href="mailto:grant-gapinski@bethel.edu">Contact Me</a>
 		</div>
 		<script>
 			$("#loginForm").on("submit", function() {
+				$('.submit-btn').attr('disabled', true);
 				return submitBannerCredentials();
 			});
 		</script>

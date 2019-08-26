@@ -1,7 +1,6 @@
 function submitBannerCredentials() {
     var data = $('#loginForm').serializeArray();
-    $('.loader').css('display', 'block');
-    $('.disclaimer').css('display', 'block');
+    $('.loading').css('display', 'block');
     $.ajax({
         url: "/submit",
         type: "post",
@@ -16,14 +15,16 @@ function submitBannerCredentials() {
             $('.results').html(`${JSON.stringify(result, undefined, 2)}`);
             $('#loginForm')[0].reset();
             $('.readout').css('display', 'initial');
+            $('.resultMeta').css('display', 'block');
             $('.google').css('display', 'block');
-            $('.loader').css('display', 'none');
-            $('.disclaimer').css('display', 'none');
+            $('.loading').css('display', 'none');
+            $('.submit-btn').attr('disabled', false);
         },
         error: function(result) {
             $('.results').html(`Something went wrong.. sorry 😭:${JSON.stringify(result, undefined, 2)}`);
-            $('.loader').css('display', 'none');
-            $('.disclaimer').css('display', 'none');
+            $('.readout').css('display', 'initial');
+            $('.loading').css('display', 'none');
+            $('.submit-btn').attr('disabled', false);
         }
     });
     return false;
