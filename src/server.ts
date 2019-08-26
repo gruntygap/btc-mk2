@@ -1,3 +1,4 @@
+import compression from 'compression';
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
@@ -25,6 +26,8 @@ let port = 8000;
 // http -> https middleware
 // TODO: look into helmet
 if (process.env.NODE_ENV === 'production') {
+    // http -> https middleware
+    // TODO: look into helmet
     app.use((req, res, next) => {
         if (req.secure) {
             next();
@@ -32,10 +35,12 @@ if (process.env.NODE_ENV === 'production') {
             res.redirect(`https://${req.headers.host}${req.url}`);
         }
     });
+    app.use(compression());
 }
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, '/../src/public')));
 
+// Nothing to show on index, so send to app
 app.get('/', (req, res) => {
     res.redirect(307, '/banner-to-calendar');
 });
@@ -73,14 +78,13 @@ if (process.env.NODE_ENV === 'production') {
         cert: certificate,
         key: privateKey,
     };
-    // http -> https middleware
-    // TODO: look into helmet
     const httpsServer = https.createServer(credentials, app);
     httpsServer.listen(443, () => {
         console.log('HTTPS Server running on port 443');
     });
 }
 
+// This will be the primary server if developing, but the redirecting server to https if prod
 const httpServer = http.createServer(app);
 httpServer.listen(port, () => {
     console.log(`HTTP Server running on port ${port}`);
